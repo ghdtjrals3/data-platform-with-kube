@@ -66,6 +66,7 @@ prod/api-server
 Namespace 단위로 접근 권한을 제어할 수 있다.
 
 예:
+
 - 특정 팀은 dev Namespace만 접근 가능
 - 운영팀은 prod 접근 가능
 
@@ -84,12 +85,12 @@ Namespace별로 CPU/Memory 사용량 제한 가능:
 
 Kubernetes에는 기본적으로 다음 Namespace가 존재한다:
 
-| Namespace | 설명 |
-|-----------|------|
-| default | 기본 작업 공간 |
-| kube-system | Kubernetes 시스템 컴포넌트 |
-| kube-public | 모든 사용자가 읽을 수 있는 리소스 |
-| kube-node-lease | 노드 상태 관리 |
+| Namespace       | 설명                              |
+| --------------- | --------------------------------- |
+| default         | 기본 작업 공간                    |
+| kube-system     | Kubernetes 시스템 컴포넌트        |
+| kube-public     | 모든 사용자가 읽을 수 있는 리소스 |
+| kube-node-lease | 노드 상태 관리                    |
 
 확인 명령어:
 
@@ -134,7 +135,7 @@ kubectl delete namespace data-platform
 apiVersion: v1  
 kind: Namespace  
 metadata:  
-  name: data-platform  
+ name: data-platform
 
 적용:
 
@@ -171,7 +172,7 @@ data-platform
 
 data-dev  
 data-staging  
-data-prod  
+data-prod
 
 초기에는 복잡하게 나누지 않고, 하나의 Namespace에서 시작한다.
 

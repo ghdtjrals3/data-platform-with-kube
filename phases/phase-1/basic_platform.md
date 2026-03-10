@@ -104,6 +104,19 @@ docker compose up -d
 
 ---
 
+### PostgreSQL 설치(분석DB용)
+
+쿠버네티스에서 DB를 사용하기 위해 PV
+
+설치:
+
+```
+helm install my-postgres bitnami/postgresql \
+  --set global.postgresql.auth.username=admin \
+  --set global.postgresql.auth.password=pwd \
+  --set global.postgresql.auth.database=mydbname
+```
+
 ---
 
 #### 추가: 왜 yaml로 정의해서 설치할까?
@@ -146,6 +159,8 @@ kubectl get pods -n [내 namespace]
 
 3. MinIO를 외부 Object Storage로 쓰려는 목적이었는데 PV/PVC로 연결하려고 설계하면서 Kubernetes 스토리지 구조를 잘못 이해함.
    -> PV/PVC는 Kubernetes 내부 워크로드(PostgreSQL 등)의 파일/블록 스토리지를 위한 것이고, Object Storage(MinIO/S3)는 API(S3)로 직접 접근하는 외부 스토리지라는 점을 정리함. MinIO는 Kubernetes 밖에서 Docker Compose로 실행하고 로컬 디스크(`~/lab/minio-data`)를 컨테이너 `/data`에 볼륨 마운트하여 데이터를 저장하도록 구성함. 애플리케이션(Pod)은 PV를 통해 접근하는 것이 아니라 `http://<host>:9900` S3 endpoint와 AccessKey/SecretKey를 사용해 MinIO에 직접 접근하는 구조로 수정함.
+
+- 참고 url https://velog.io/@newnew_daddy/spark06
 
 ```
 
