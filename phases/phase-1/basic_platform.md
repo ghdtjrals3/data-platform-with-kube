@@ -99,7 +99,7 @@ services:
 ```
 
 ```
-docker compose up -d 
+docker compose up -d
 ```
 
 ---
@@ -124,30 +124,6 @@ helm install my-postgres bitnami/postgresql \
 쿠버네티스는 기본적으로 선언적 시스템임
 내가 만드는 플랫폼 수준에서는 내장 Helm Chart를 사용해도 되지만
 학습을 위해 Helm values.yaml로 정의하여 선언적 인프라 방식으로 구성함
-
-기본 설치:
-
-```
-
-helm install [dbname] bitnami/postgresql
-
-```
-
-yaml 파일 정의 후 설치:
-
-```
-
-helm install postgres bitnami/postgresql -n data-platform -f values/postgres.yaml
-
-```
-
-잘 올라갔는지 확인:
-
-```
-
-kubectl get pods -n [내 namespace]
-
-```
 
 ## 트러블 슈팅
 
