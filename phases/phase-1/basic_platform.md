@@ -37,12 +37,6 @@ local-path가 보이면 OK
 
 #### [Helm이란?](../../docs/helm.md)
 
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo add apache-airflow https://airflow.apache.org
-helm repo update
-```
-
 ---
 
 ### Airflow 설치
@@ -64,7 +58,22 @@ helm upgrade --install airflow apache-airflow/airflow --namespace airflow --crea
 MinIO는 외부스토리지로 사용할 예정으로 쿠버네티스의 관리 대상이 아님
 단일 컨테이너로 올려서 관리
 
-설치:
+Docker 설치:
+```
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+sudo systemctl status docker
+```
+
+설치: (실제 배포시 minioSecretKey 등 변경 필요)
 
 ```yaml
 services:
@@ -110,10 +119,14 @@ docker compose up -d
 
 설치:
 
+실제 배포에서는 username, password, database는 따로 관리해야함
+
 ```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
 helm install my-postgres bitnami/postgresql \
   --set global.postgresql.auth.username=admin \
-  --set global.postgresql.auth.password=pwd \
+  --set global.postgresql.auth.password=1234 \
   --set global.postgresql.auth.database=mydbname
 ```
 
@@ -136,8 +149,15 @@ helm install my-postgres bitnami/postgresql \
 3. MinIO를 외부 Object Storage로 쓰려는 목적이었는데 PV/PVC로 연결하려고 설계하면서 Kubernetes 스토리지 구조를 잘못 이해함.
    -> PV/PVC는 Kubernetes 내부 워크로드(PostgreSQL 등)의 파일/블록 스토리지를 위한 것이고, Object Storage(MinIO/S3)는 API(S3)로 직접 접근하는 외부 스토리지라는 점을 정리함. MinIO는 Kubernetes 밖에서 Docker Compose로 실행하고 로컬 디스크(`~/lab/minio-data`)를 컨테이너 `/data`에 볼륨 마운트하여 데이터를 저장하도록 구성함. 애플리케이션(Pod)은 PV를 통해 접근하는 것이 아니라 `http://<host>:9900` S3 endpoint와 AccessKey/SecretKey를 사용해 MinIO에 직접 접근하는 구조로 수정함.
 
-- 참고 url https://velog.io/@newnew_daddy/spark06
 
-```
+4. helm이 root권한이 필요한 k3s 접근이 없음
+  -> mkdir -p ~/.kube
+  sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+  sudo chown $(id -u):$(id -g) ~/.kube/config
 
-```
+
+
+- 참고 url: https://velog.io/@newnew_daddy/spark06
+- 참고: MinIO S3 API 엔드포인트: http://192.168.19.112:9900
+        MinIO Console:          http://192.168.19.112:9901
+- 참고: busy box -> Unix/Linux에서 자주 쓰이는 400개 가량의 명령어를 가진 오픈소스이다
